@@ -4,6 +4,8 @@ import { AuthProvider, AuthContext } from './context/AuthContext';
 import { CartProvider, CartContext } from './context/CartContext';
 import Home from './pages/Home';
 import Catalog from './pages/Catalog';
+import Login from './pages/Login';
+import Register from './pages/Register';
 import './styles/App.css';
 
 function AppContent() {
@@ -40,6 +42,8 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/catalog" element={<Catalog />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </main>
 
