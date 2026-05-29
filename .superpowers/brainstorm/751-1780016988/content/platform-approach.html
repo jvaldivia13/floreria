@@ -1,0 +1,26 @@
+<h2>¿Cuál es tu enfoque preferido?</h2>
+<p class="subtitle">Esto define la arquitectura inicial de la app</p>
+
+<div class="options">
+  <div class="option" data-choice="web-only" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Web (Responsive)</h3>
+      <p>Una única app web que funciona en desktop y móvil. Más rápido de desarrollar, funciona en cualquier dispositivo. Ideal para empezar.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="mobile-first" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Mobile-First (App + Web)</h3>
+      <p>App nativa para iOS/Android + versión web. Mayor inversión inicial pero mejor experiencia en móvil. Más usuarios en apps.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="pwa" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Progressive Web App (PWA)</h3>
+      <p>Web app que funciona offline y se instala como app. Híbrido entre web y app nativa. Buen balance.</p>
+    </div>
+  </div>
+</div>
