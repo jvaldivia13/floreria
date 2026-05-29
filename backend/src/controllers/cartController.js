@@ -55,8 +55,8 @@ async function getCart(req, res) {
     const userId = req.user.id;
 
     const result = await pool.query(
-      `SELECT ci.id, p.id as product_id, p.nombre, p.precio, ci.cantidad,
-              (p.precio * ci.cantidad) as subtotal
+      `SELECT ci.id, p.id as product_id, p.name, p.price, ci.cantidad,
+              (p.price * ci.cantidad) as subtotal
        FROM cart_items ci
        JOIN products p ON ci.product_id = p.id
        WHERE ci.user_id = $1`,

@@ -5,39 +5,39 @@ const pool = require('../config/database');
  */
 async function getProducts(req, res) {
   try {
-    const { page = 1, limit = 20, categoria, search } = req.query;
+    const { page = 1, limit = 20, category, search } = req.query;
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
-    let query = 'SELECT * FROM products WHERE activo = true';
+    let query = 'SELECT * FROM products WHERE is_available = true';
     const params = [];
 
-    if (categoria) {
-      params.push(categoria);
-      query += ` AND categoria_id = (SELECT id FROM categories WHERE nombre = $${params.length})`;
+    if (category) {
+      params.push(category);
+      query += ` AND category_id = (SELECT id FROM categories WHERE name = $${params.length})`;
     }
 
     if (search) {
       params.push(`%${search}%`);
-      query += ` AND (nombre ILIKE $${params.length} OR descripcion ILIKE $${params.length})`;
+      query += ` AND (name ILIKE $${params.length} OR description ILIKE $${params.length})`;
     }
 
     params.push(parseInt(limit), offset);
-    query += ` ORDER BY fecha_creacion DESC LIMIT $${params.length - 1} OFFSET $${params.length}`;
+    query += ` ORDER BY created_at DESC LIMIT $${params.length - 1} OFFSET $${params.length}`;
 
     const result = await pool.query(query, params);
 
     // Get total count
-    let countQuery = 'SELECT COUNT(*) as count FROM products WHERE activo = true';
+    let countQuery = 'SELECT COUNT(*) as count FROM products WHERE is_available = true';
     const countParams = [];
 
-    if (categoria) {
-      countParams.push(categoria);
-      countQuery += ` AND categoria_id = (SELECT id FROM categories WHERE nombre = $${countParams.length})`;
+    if (category) {
+      countParams.push(category);
+      countQuery += ` AND category_id = (SELECT id FROM categories WHERE name = $${countParams.length})`;
     }
 
     if (search) {
       countParams.push(`%${search}%`);
-      countQuery += ` AND (nombre ILIKE $${countParams.length} OR descripcion ILIKE $${countParams.length})`;
+      countQuery += ` AND (name ILIKE $${countParams.length} OR description ILIKE $${countParams.length})`;
     }
 
     const countResult = await pool.query(countQuery, countParams);
@@ -69,7 +69,7 @@ async function getProductById(req, res) {
     const { id } = req.params;
 
     const result = await pool.query(
-      'SELECT * FROM products WHERE id = $1 AND activo = true',
+      'SELECT * FROM products WHERE id = $1 AND is_available = true',
       [id]
     );
 
@@ -97,9 +97,9 @@ async function getProductById(req, res) {
  */
 async function createProduct(req, res) {
   try {
-    const { nombre, descripcion, precio, categoria_id, foto_url, stock } = req.body;
+    const { name, description, price, category_id, image_url, stock_quantity } = req.body;
 
-    if (!nombre || !precio) {
+    if (!name || !price) {
       return res.status(400).json({
         error: 'Validation Error',
         message: 'Product name and price are required',
@@ -107,10 +107,10 @@ async function createProduct(req, res) {
     }
 
     const result = await pool.query(
-      `INSERT INTO products (nombre, descripcion, precio, categoria_id, foto_url, stock)
+      `INSERT INTO products (name, description, price, category_id, image_url, stock_quantity)
        VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [nombre, descripcion || null, precio, categoria_id || null, foto_url || null, stock || 0]
+      [name, description || null, price, category_id || null, image_url || null, stock_quantity || 0]
     );
 
     return res.status(201).json({
@@ -132,45 +132,45 @@ async function createProduct(req, res) {
 async function updateProduct(req, res) {
   try {
     const { id } = req.params;
-    const { nombre, descripcion, precio, categoria_id, foto_url, stock, activo } = req.body;
+    const { name, description, price, category_id, image_url, stock_quantity, is_available } = req.body;
 
     const updates = [];
     const params = [];
     let paramNum = 1;
 
-    if (nombre !== undefined) {
-      updates.push(`nombre = $${paramNum}`);
-      params.push(nombre);
+    if (name !== undefined) {
+      updates.push(`name = $${paramNum}`);
+      params.push(name);
       paramNum++;
     }
-    if (descripcion !== undefined) {
-      updates.push(`descripcion = $${paramNum}`);
-      params.push(descripcion);
+    if (description !== undefined) {
+      updates.push(`description = $${paramNum}`);
+      params.push(description);
       paramNum++;
     }
-    if (precio !== undefined) {
-      updates.push(`precio = $${paramNum}`);
-      params.push(precio);
+    if (price !== undefined) {
+      updates.push(`price = $${paramNum}`);
+      params.push(price);
       paramNum++;
     }
-    if (categoria_id !== undefined) {
-      updates.push(`categoria_id = $${paramNum}`);
-      params.push(categoria_id);
+    if (category_id !== undefined) {
+      updates.push(`category_id = $${paramNum}`);
+      params.push(category_id);
       paramNum++;
     }
-    if (foto_url !== undefined) {
-      updates.push(`foto_url = $${paramNum}`);
-      params.push(foto_url);
+    if (image_url !== undefined) {
+      updates.push(`image_url = $${paramNum}`);
+      params.push(image_url);
       paramNum++;
     }
-    if (stock !== undefined) {
-      updates.push(`stock = $${paramNum}`);
-      params.push(stock);
+    if (stock_quantity !== undefined) {
+      updates.push(`stock_quantity = $${paramNum}`);
+      params.push(stock_quantity);
       paramNum++;
     }
-    if (activo !== undefined) {
-      updates.push(`activo = $${paramNum}`);
-      params.push(activo);
+    if (is_available !== undefined) {
+      updates.push(`is_available = $${paramNum}`);
+      params.push(is_available);
       paramNum++;
     }
 
@@ -209,14 +209,14 @@ async function updateProduct(req, res) {
 }
 
 /**
- * Delete product (soft delete - set activo to false)
+ * Delete product (soft delete - set is_available to false)
  */
 async function deleteProduct(req, res) {
   try {
     const { id } = req.params;
 
     const result = await pool.query(
-      'UPDATE products SET activo = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING id',
+      'UPDATE products SET is_available = false, updated_at = CURRENT_TIMESTAMP WHERE id = $1 RETURNING id',
       [id]
     );
 

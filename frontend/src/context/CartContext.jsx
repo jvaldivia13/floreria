@@ -8,21 +8,30 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     // Calculate total
-    const subtotal = items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+    const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const shipping = items.length > 0 ? 20 : 0;
     setTotal(subtotal + shipping);
   }, [items]);
 
-  const addItem = (product, cantidad = 1) => {
+  const addItem = (product, quantity = 1) => {
+    const cartItem = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      image_url: product.image_url,
+      quantity: quantity
+    };
+
     const existing = items.find(item => item.id === product.id);
     if (existing) {
       setItems(items.map(item =>
         item.id === product.id
-          ? { ...item, cantidad: item.cantidad + cantidad }
+          ? { ...item, quantity: item.quantity + quantity }
           : item
       ));
     } else {
-      setItems([...items, { ...product, cantidad }]);
+      setItems([...items, cartItem]);
     }
   };
 
@@ -30,13 +39,13 @@ export const CartProvider = ({ children }) => {
     setItems(items.filter(item => item.id !== productId));
   };
 
-  const updateQuantity = (productId, cantidad) => {
-    if (cantidad < 1) {
+  const updateQuantity = (productId, quantity) => {
+    if (quantity < 1) {
       removeItem(productId);
     } else {
       setItems(items.map(item =>
         item.id === productId
-          ? { ...item, cantidad }
+          ? { ...item, quantity }
           : item
       ));
     }

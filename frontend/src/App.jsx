@@ -29,15 +29,18 @@ function AppContent() {
               🛒 Carrito ({items.length})
             </Link>
             {user ? (
-              <>
-                <Link to="/account">{user.nombre}</Link>
+              <div className="user-section">
+                <div className="user-info">
+                  <span className="user-avatar">👤</span>
+                  <span className="user-email">{user.email}</span>
+                </div>
                 <button onClick={logout} className="btn-logout">Salir</button>
-              </>
+              </div>
             ) : (
-              <>
+              <div className="auth-section">
                 <Link to="/login" className="btn btn-link">Iniciar sesión</Link>
                 <Link to="/register" className="btn btn-primary">Registrarse</Link>
-              </>
+              </div>
             )}
           </nav>
         </div>

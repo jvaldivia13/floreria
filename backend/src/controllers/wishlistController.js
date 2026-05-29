@@ -47,7 +47,7 @@ async function getWishlist(req, res) {
       `SELECT p.*
        FROM wishlist w
        JOIN products p ON w.product_id = p.id
-       WHERE w.user_id = $1 AND p.activo = true
+       WHERE w.user_id = $1 AND p.is_available = true
        ORDER BY w.fecha_agregado DESC`,
       [userId]
     );

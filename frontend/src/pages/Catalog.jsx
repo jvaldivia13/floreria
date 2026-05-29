@@ -59,8 +59,11 @@ export default function Catalog() {
         />
         <select value={categoria} onChange={handleCategoryChange} className="filter-select">
           <option value="">Todas las categorías</option>
-          <option value="arreglos">Arreglos</option>
-          <option value="complementos">Complementos</option>
+          <option value="Ramos">Ramos</option>
+          <option value="Arreglos">Arreglos</option>
+          <option value="Coronas">Coronas</option>
+          <option value="Plantas">Plantas</option>
+          <option value="Accesorios">Accesorios</option>
         </select>
       </div>
 
@@ -72,14 +75,17 @@ export default function Catalog() {
             {products.length > 0 ? (
               products.map(product => (
                 <div key={product.id} className="product-card">
-                  {product.foto_url && (
-                    <img src={product.foto_url} alt={product.nombre} className="product-image" />
-                  )}
+                  <div className="product-image-container">
+                    {product.image_url ? (
+                      <img src={product.image_url} alt={product.name} className="product-image" onError={(e) => e.target.style.display = 'none'} />
+                    ) : null}
+                    <div className="product-image-placeholder">🌸</div>
+                  </div>
                   <div className="product-content">
-                    <h3>{product.nombre}</h3>
-                    {product.descripcion && <p className="description">{product.descripcion}</p>}
-                    <p className="price">S/. {parseFloat(product.precio).toFixed(2)}</p>
-                    {product.stock > 0 ? (
+                    <h3>{product.name}</h3>
+                    {product.description && <p className="description">{product.description}</p>}
+                    <p className="price">S/. {parseFloat(product.price).toFixed(2)}</p>
+                    {product.stock_quantity > 0 ? (
                       <button onClick={() => handleAddToCart(product)} className="btn btn-small">
                         Agregar al carrito
                       </button>

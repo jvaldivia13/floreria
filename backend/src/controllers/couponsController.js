@@ -51,7 +51,7 @@ async function validateCoupon(req, res) {
     const result = await pool.query(
       `SELECT * FROM coupons
        WHERE UPPER(codigo) = UPPER($1)
-       AND activo = true
+       AND is_available = true
        AND (fecha_expiracion IS NULL OR fecha_expiracion >= CURRENT_DATE)
        AND (usos_maximos IS NULL OR usos_actuales < usos_maximos)`,
       [codigo]
@@ -89,7 +89,7 @@ async function validateCoupon(req, res) {
 async function getCoupons(req, res) {
   try {
     const result = await pool.query(
-      'SELECT * FROM coupons ORDER BY fecha_creacion DESC'
+      'SELECT * FROM coupons ORDER BY created_at DESC'
     );
 
     return res.status(200).json({
@@ -111,9 +111,9 @@ async function getCoupons(req, res) {
 async function updateCoupon(req, res) {
   try {
     const { id } = req.params;
-    const { activo } = req.body;
+    const { is_available } = req.body;
 
-    if (typeof activo !== 'boolean') {
+    if (typeof is_available !== 'boolean') {
       return res.status(400).json({
         error: 'Validation Error',
         message: 'Active status is required',
@@ -121,8 +121,8 @@ async function updateCoupon(req, res) {
     }
 
     const result = await pool.query(
-      'UPDATE coupons SET activo = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
-      [activo, id]
+      'UPDATE coupons SET is_available = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *',
+      [is_available, id]
     );
 
     if (result.rows.length === 0) {

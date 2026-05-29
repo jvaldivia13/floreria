@@ -21,14 +21,14 @@ async function getDashboardSummary(req, res) {
       ['pendiente']
     );
 
-    // Low stock products
+    // Low stock_quantity products
     const lowStock = await pool.query(
-      'SELECT COUNT(*) as count FROM products WHERE stock < 5 AND activo = true'
+      'SELECT COUNT(*) as count FROM products WHERE stock_quantity < 5 AND is_available = true'
     );
 
     // Total customers
     const customers = await pool.query(
-      'SELECT COUNT(*) as count FROM users WHERE rol = $1',
+      'SELECT COUNT(*) as count FROM users WHERE role = $1',
       ['cliente']
     );
 
@@ -37,7 +37,7 @@ async function getDashboardSummary(req, res) {
         orders_today: parseInt(salesToday.rows[0].total_orders || 0),
         sales_today: parseFloat(salesToday.rows[0].total_sales || 0),
         pending_orders: parseInt(pendingOrders.rows[0].count || 0),
-        low_stock_items: parseInt(lowStock.rows[0].count || 0),
+        low_stock_quantity_items: parseInt(lowStock.rows[0].count || 0),
         total_customers: parseInt(customers.rows[0].count || 0),
       },
     });
@@ -97,10 +97,10 @@ async function getSalesReport(req, res) {
 async function getTopProducts(req, res) {
   try {
     const result = await pool.query(
-      `SELECT p.id, p.nombre, SUM(oi.cantidad) as total_vendido, SUM(oi.subtotal) as ingresos
+      `SELECT p.id, p.name, SUM(oi.cantidad) as total_vendido, SUM(oi.subtotal) as ingresos
        FROM order_items oi
        JOIN products p ON oi.product_id = p.id
-       GROUP BY p.id, p.nombre
+       GROUP BY p.id, p.name
        ORDER BY total_vendido DESC
        LIMIT 10`
     );
@@ -108,7 +108,7 @@ async function getTopProducts(req, res) {
     return res.status(200).json({
       top_products: result.rows.map(row => ({
         id: row.id,
-        nombre: row.nombre,
+        name: row.name,
         total_vendido: parseInt(row.total_vendido),
         ingresos: parseFloat(row.ingresos || 0),
       })),
@@ -128,15 +128,15 @@ async function getTopProducts(req, res) {
 async function getInventoryStatus(req, res) {
   try {
     const result = await pool.query(
-      `SELECT id, nombre, stock,
+      `SELECT id, name, stock_quantity,
               CASE
-                WHEN stock = 0 THEN 'Sin stock'
-                WHEN stock < 5 THEN 'Bajo stock'
+                WHEN stock_quantity = 0 THEN 'Sin stock_quantity'
+                WHEN stock_quantity < 5 THEN 'Bajo stock_quantity'
                 ELSE 'Disponible'
               END as estado
        FROM products
-       WHERE activo = true
-       ORDER BY stock ASC`
+       WHERE is_available = true
+       ORDER BY stock_quantity ASC`
     );
 
     return res.status(200).json({
@@ -160,10 +160,10 @@ async function getCustomers(req, res) {
     const offset = (parseInt(page) - 1) * parseInt(limit);
 
     const result = await pool.query(
-      `SELECT u.id, u.nombre, u.email, u.telefono, COUNT(o.id) as total_ordenes, SUM(o.total) as total_gastado
+      `SELECT u.id, u.name, u.email, u.phone, COUNT(o.id) as total_ordenes, SUM(o.total) as total_gastado
        FROM users u
        LEFT JOIN orders o ON u.id = o.user_id
-       WHERE u.rol = $1
+       WHERE u.role = $1
        GROUP BY u.id
        ORDER BY total_ordenes DESC
        LIMIT $2 OFFSET $3`,
@@ -173,9 +173,9 @@ async function getCustomers(req, res) {
     return res.status(200).json({
       customers: result.rows.map(row => ({
         id: row.id,
-        nombre: row.nombre,
+        name: row.name,
         email: row.email,
-        telefono: row.telefono,
+        phone: row.phone,
         total_ordenes: parseInt(row.total_ordenes || 0),
         total_gastado: parseFloat(row.total_gastado || 0),
       })),

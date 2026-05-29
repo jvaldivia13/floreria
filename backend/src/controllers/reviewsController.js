@@ -56,11 +56,11 @@ async function getReviewsByProduct(req, res) {
     const { product_id } = req.params;
 
     const result = await pool.query(
-      `SELECT r.*, u.nombre
+      `SELECT r.*, u.name
        FROM reviews r
        JOIN users u ON r.user_id = u.id
        WHERE r.product_id = $1
-       ORDER BY r.fecha_creacion DESC`,
+       ORDER BY r.created_at DESC`,
       [product_id]
     );
 

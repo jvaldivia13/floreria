@@ -6,9 +6,9 @@ const pool = require('../config/database');
 async function createOrder(req, res) {
   try {
     const userId = req.user.id;
-    const { direccion_entrega, fecha_entrega_esperada, metodo_pago } = req.body;
+    const { address_entrega, fecha_entrega_esperada, metodo_pago } = req.body;
 
-    if (!direccion_entrega || !fecha_entrega_esperada || !metodo_pago) {
+    if (!address_entrega || !fecha_entrega_esperada || !metodo_pago) {
       return res.status(400).json({
         error: 'Validation Error',
         message: 'Delivery address, expected date, and payment method are required',
@@ -17,8 +17,8 @@ async function createOrder(req, res) {
 
     // Get cart items
     const cartResult = await pool.query(
-      `SELECT ci.id, p.id as product_id, p.precio, ci.cantidad,
-              (p.precio * ci.cantidad) as subtotal
+      `SELECT ci.id, p.id as product_id, p.price, ci.cantidad,
+              (p.price * ci.cantidad) as subtotal
        FROM cart_items ci
        JOIN products p ON ci.product_id = p.id
        WHERE ci.user_id = $1`,
@@ -42,10 +42,10 @@ async function createOrder(req, res) {
     // Start transaction - create order
     const orderResult = await pool.query(
       `INSERT INTO orders (user_id, subtotal, descuento_aplicado, total, estado, metodo_pago,
-                           fecha_entrega_esperada, direccion_entrega)
+                           fecha_entrega_esperada, address_entrega)
        VALUES ($1, $2, $3, $4, 'pendiente', $5, $6, $7)
        RETURNING id, total, metodo_pago, estado, created_at`,
-      [userId, subtotal, descuento, total, metodo_pago, fecha_entrega_esperada, direccion_entrega]
+      [userId, subtotal, descuento, total, metodo_pago, fecha_entrega_esperada, address_entrega]
     );
 
     const order = orderResult.rows[0];
@@ -53,9 +53,9 @@ async function createOrder(req, res) {
     // Add order items
     for (const item of items) {
       await pool.query(
-        `INSERT INTO order_items (order_id, product_id, cantidad, precio_unitario, subtotal)
+        `INSERT INTO order_items (order_id, product_id, cantidad, price_unitario, subtotal)
          VALUES ($1, $2, $3, $4, $5)`,
-        [order.id, item.product_id, item.cantidad, item.precio, item.subtotal]
+        [order.id, item.product_id, item.cantidad, item.price, item.subtotal]
       );
     }
 

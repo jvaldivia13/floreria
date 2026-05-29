@@ -7,13 +7,13 @@ const { hashPassword, verifyPassword } = require('../utils/passwordUtils');
  */
 async function register(req, res) {
   try {
-    const { email, password, nombre, telefono, direccion } = req.body;
+    const { email, password, first_name, last_name, phone, address } = req.body;
 
     // Validate required fields
-    if (!email || !password || !nombre) {
+    if (!email || !password || !first_name || !last_name) {
       return res.status(400).json({
         error: 'Validation Error',
-        message: 'Email, password, and name are required',
+        message: 'Email, password, first_name, and last_name are required',
       });
     }
 
@@ -35,19 +35,19 @@ async function register(req, res) {
 
     // Insert new user
     const result = await pool.query(
-      `INSERT INTO users (email, password_hash, nombre, telefono, direccion, rol)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING id, email, nombre, rol`,
-      [email, passwordHash, nombre, telefono || null, direccion || null, 'cliente']
+      `INSERT INTO users (email, password_hash, first_name, last_name, phone, address, role)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, email, first_name, last_name, role`,
+      [email, passwordHash, first_name, last_name, phone || null, address || null, 'cliente']
     );
 
     const user = result.rows[0];
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.rol },
+      { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRY || '7d' }
+      { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
     );
 
     return res.status(201).json({
@@ -55,8 +55,9 @@ async function register(req, res) {
       user: {
         id: user.id,
         email: user.email,
-        nombre: user.nombre,
-        rol: user.rol,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        rolee: user.rolee,
       },
       token,
     });
@@ -111,7 +112,7 @@ async function login(req, res) {
 
     // Generate JWT token
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.rol },
+      { id: user.id, email: user.email, rolee: user.role },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRY || '7d' }
     );
@@ -121,8 +122,8 @@ async function login(req, res) {
       user: {
         id: user.id,
         email: user.email,
-        nombre: user.nombre,
-        rol: user.rol,
+        name: user.name,
+        role: user.role,
       },
       token,
     });
@@ -152,7 +153,7 @@ async function getProfile(req, res) {
     const userId = req.user.id;
 
     const result = await pool.query(
-      'SELECT id, email, nombre, telefono, direccion, rol FROM users WHERE id = $1',
+      'SELECT id, email, name, phone, address, role FROM users WHERE id = $1',
       [userId]
     );
 

@@ -9,7 +9,7 @@ export default function Cart() {
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  const subtotal = items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+  const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = items.length > 0 ? 20 : 0;
 
   const handleCheckout = () => {
@@ -40,19 +40,23 @@ export default function Cart() {
         <div className="cart-items">
           {items.map(item => (
             <div key={item.id} className="cart-item">
+              {item.image_url && (
+                <img src={item.image_url} alt={item.name} className="item-image" onError={(e) => e.target.style.display = 'none'} />
+              )}
               <div className="item-info">
-                <h3>{item.nombre}</h3>
-                <p className="item-price">S/. {parseFloat(item.precio).toFixed(2)}</p>
+                <h3>{item.name}</h3>
+                {item.description && <p className="item-description">{item.description}</p>}
+                <p className="item-price">S/. {parseFloat(item.price).toFixed(2)}</p>
               </div>
 
               <div className="item-quantity">
-                <button onClick={() => updateQuantity(item.id, item.cantidad - 1)}>-</button>
-                <input type="number" value={item.cantidad} readOnly />
-                <button onClick={() => updateQuantity(item.id, item.cantidad + 1)}>+</button>
+                <button onClick={() => updateQuantity(item.id, item.quantity - 1)}>-</button>
+                <input type="number" value={item.quantity} readOnly />
+                <button onClick={() => updateQuantity(item.id, item.quantity + 1)}>+</button>
               </div>
 
               <div className="item-subtotal">
-                <p>S/. {(item.precio * item.cantidad).toFixed(2)}</p>
+                <p>S/. {(item.price * item.quantity).toFixed(2)}</p>
               </div>
 
               <button onClick={() => removeItem(item.id)} className="btn-remove">Eliminar</button>

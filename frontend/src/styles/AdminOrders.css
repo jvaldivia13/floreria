@@ -3,15 +3,18 @@
 }
 
 .admin-orders h1 {
-  color: #E85B9C;
-  margin-bottom: 2rem;
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-8);
+  font-size: 2.2rem;
+  font-weight: 700;
 }
 
 .orders-table {
-  background: white;
-  border-radius: 8px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(232, 91, 156, 0.1);
 }
 
 table {
@@ -20,27 +23,39 @@ table {
 }
 
 thead {
-  background: #f5f5f5;
+  background: linear-gradient(135deg, rgba(232, 91, 156, 0.05) 0%, rgba(139, 90, 157, 0.05) 100%);
+  border-bottom: 2px solid rgba(232, 91, 156, 0.2);
 }
 
 th {
-  padding: 1rem;
+  padding: var(--spacing-5);
   text-align: left;
-  color: #333;
-  font-weight: 600;
-  border-bottom: 2px solid #eee;
+  color: var(--color-text-dark);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.3px;
 }
 
 td {
-  padding: 1rem;
-  border-bottom: 1px solid #eee;
-  color: #666;
+  padding: var(--spacing-5);
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+tbody tr {
+  transition: background-color var(--transition-base);
+}
+
+tbody tr:hover {
+  background-color: rgba(232, 91, 156, 0.05);
 }
 
 .empty-state {
   text-align: center;
-  color: #999;
+  color: var(--color-text-light);
   font-style: italic;
+  padding: var(--spacing-8);
 }
 
 tr:last-child td {
@@ -48,20 +63,57 @@ tr:last-child td {
 }
 
 .btn-action {
-  padding: 0.5rem 1rem;
-  margin-right: 0.5rem;
+  padding: var(--spacing-3) var(--spacing-4);
+  margin-right: var(--spacing-2);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all var(--transition-base);
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-action.view {
-  background: #4a90e2;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.2);
+}
+
+.btn-action.view:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
 }
 
 .btn-action.update {
-  background: #f39c12;
+  background: linear-gradient(135deg, var(--color-warning) 0%, #d68910 100%);
   color: white;
+  box-shadow: 0 2px 8px rgba(230, 126, 34, 0.2);
+}
+
+.btn-action.update:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+}
+
+@media (max-width: 768px) {
+  .admin-orders h1 {
+    font-size: 1.8rem;
+  }
+
+  table {
+    font-size: 0.85rem;
+  }
+
+  th, td {
+    padding: var(--spacing-4);
+  }
+
+  .btn-action {
+    padding: var(--spacing-2) var(--spacing-3);
+    font-size: 0.8rem;
+  }
 }

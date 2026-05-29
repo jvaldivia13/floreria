@@ -8,9 +8,10 @@ export default function Register() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    nombre: '',
-    telefono: '',
-    direccion: '',
+    first_name: '',
+    last_name: '',
+    phone: '',
+    address: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,14 +32,15 @@ export default function Register() {
       const response = await authAPI.register(
         formData.email,
         formData.password,
-        formData.nombre,
-        formData.telefono,
-        formData.direccion
+        formData.first_name,
+        formData.last_name,
+        formData.phone,
+        formData.address
       );
       login(response.data.user, response.data.token);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || 'Registro fallido');
     } finally {
       setLoading(false);
     }
@@ -56,9 +58,22 @@ export default function Register() {
             <label>Nombre</label>
             <input
               type="text"
-              name="nombre"
-              value={formData.nombre}
+              name="first_name"
+              value={formData.first_name}
               onChange={handleChange}
+              placeholder="Ej: Juan"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Apellido</label>
+            <input
+              type="text"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleChange}
+              placeholder="Ej: Pérez"
               required
             />
           </div>
@@ -70,6 +85,7 @@ export default function Register() {
               name="email"
               value={formData.email}
               onChange={handleChange}
+              placeholder="Ej: tu@email.com"
               required
             />
           </div>
@@ -81,6 +97,7 @@ export default function Register() {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              placeholder="Mínimo 6 caracteres"
               required
             />
           </div>
@@ -89,9 +106,10 @@ export default function Register() {
             <label>Teléfono (opcional)</label>
             <input
               type="tel"
-              name="telefono"
-              value={formData.telefono}
+              name="phone"
+              value={formData.phone}
               onChange={handleChange}
+              placeholder="Ej: 987654321"
             />
           </div>
 
@@ -99,9 +117,10 @@ export default function Register() {
             <label>Dirección (opcional)</label>
             <input
               type="text"
-              name="direccion"
-              value={formData.direccion}
+              name="address"
+              value={formData.address}
               onChange={handleChange}
+              placeholder="Ej: Av. Main 123"
             />
           </div>
 
