@@ -1,0 +1,28 @@
+{
+  "$schema": "https://railway.app/schema/railway.json",
+  "services": [
+    {
+      "name": "backend",
+      "type": "nodejs",
+      "path": "backend",
+      "startCommand": "npm install && npm start",
+      "envVariables": {
+        "NODE_ENV": "production",
+        "PORT": "5000"
+      }
+    },
+    {
+      "name": "frontend",
+      "type": "nodejs",
+      "path": "frontend",
+      "startCommand": "npm install && npm run build && npx serve -s dist -l 3000",
+      "envVariables": {
+        "NODE_ENV": "production"
+      }
+    }
+  ],
+  "postgres": {
+    "enabled": true,
+    "version": "16"
+  }
+}
