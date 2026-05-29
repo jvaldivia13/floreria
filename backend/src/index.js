@@ -12,6 +12,7 @@ const ordersRoutes = require('./routes/ordersRoutes');
 const reviewsRoutes = require('./routes/reviewsRoutes');
 const wishlistRoutes = require('./routes/wishlistRoutes');
 const couponsRoutes = require('./routes/couponsRoutes');
+const reportsRoutes = require('./routes/reportsRoutes');
 const { handlePaymentWebhook } = require('./services/paymentService');
 
 const app = express();
@@ -45,6 +46,7 @@ app.use('/api/orders', ordersRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/coupons', couponsRoutes);
+app.use('/api/reports', reportsRoutes);
 
 // Webhook endpoints (should validate with payment provider in production)
 app.post('/api/webhooks/yape', async (req, res) => {
