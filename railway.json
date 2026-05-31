@@ -13,12 +13,11 @@
     },
     {
       "name": "frontend",
-      "type": "nodejs",
-      "path": "frontend",
-      "startCommand": "npm install && npm run build && npx serve -s dist -l 3000",
+      "type": "static",
+      "path": "frontend/dist",
+      "buildCommand": "npm install && npm run build",
       "envVariables": {
-        "NODE_ENV": "production",
-        "VITE_API_URL": "${{ services.backend.url }}/api"
+        "VITE_API_URL": "https://floreria-production-4282.up.railway.app/api"
       }
     }
   ],
