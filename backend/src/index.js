@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(helmet());
 
-// CORS configuration - allow localhost and local IP
+// CORS configuration
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigins = [
@@ -41,6 +41,7 @@ const corsOptions = {
       'http://192.168.18.9:3005',
       'http://192.168.18.9:3006',
       'http://192.168.18.9:3007',
+      'https://floreria-murex.vercel.app',
     ];
 
     if (!origin || allowedOrigins.includes(origin)) {
