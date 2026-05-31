@@ -57,7 +57,7 @@ async function register(req, res) {
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
-        rolee: user.rolee,
+        role: user.role,
       },
       token,
     });
