@@ -17,7 +17,8 @@
       "path": "frontend",
       "startCommand": "npm install && npm run build && npx serve -s dist -l 3000",
       "envVariables": {
-        "NODE_ENV": "production"
+        "NODE_ENV": "production",
+        "VITE_API_URL": "${{ services.backend.url }}/api"
       }
     }
   ],
