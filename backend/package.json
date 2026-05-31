@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "init-db": "node scripts/init-db.js",
-    "start": "node scripts/init-db.js && node src/index.js",
+    "seed": "node scripts/seed-data.js",
+    "start": "node scripts/init-db.js && node scripts/seed-data.js && node src/index.js",
     "dev": "nodemon src/index.js",
     "test": "jest --detectOpenHandles",
     "test:watch": "jest --watch"
